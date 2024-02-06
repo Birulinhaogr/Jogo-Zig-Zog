@@ -1,0 +1,75 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class BolaCControlador : MonoBehaviour
+{
+    [SerializeField]
+    private float vel = 0.2f;
+    [SerializeField]
+    private Rigidbody rb;
+    public static bool gameOver = false;
+    [SerializeField]
+    private int moedasNum = 0;
+
+    public Text txt;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.velocity = new Vector3(vel,0 ,0);
+        StartCoroutine (Ajustavel());
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            Controller();
+        }
+
+        if (!Physics.Raycast(transform.position, Vector3.down, 1))
+        {
+            gameOver = true;
+            rb.useGravity = true;
+        }
+        if (gameOver)
+        {
+            print("Caiu!!!");
+        }
+
+        Debug.DrawRay (transform.position, Vector3.down, Color.red);
+        txt.text = vel.ToString();
+    }
+
+    void Controller()
+    {
+        if (rb.velocity.x > 0)
+        {
+            rb.velocity = new Vector3(0, 0, vel);
+        }
+        else if(rb.velocity.z > 0 )
+        {
+            rb.velocity = new Vector3(vel, 0, 0);
+        }
+    }
+    private void OnTriggerEnter(Collider col)
+    {
+        if (col.gameObject.CompareTag("Moeda"))
+        {
+            Destroy (col.gameObject);
+            moedasNum++;
+        }
+    }
+     IEnumerator Ajustavel()
+    {
+        while (!gameOver)
+        {
+            yield return new WaitForSeconds(2);
+            vel += 0.2f;
+        }
+    }
+}
