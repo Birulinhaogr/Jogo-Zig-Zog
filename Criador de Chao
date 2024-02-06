@@ -1,0 +1,78 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class CriaChao : MonoBehaviour
+{
+    [SerializeField]
+    private GameObject chao, moeda;
+    [SerializeField]
+    private float tamanhoXZ;
+    [SerializeField]
+    private Vector3 posUltima;
+
+    // Start is called before the first frame update
+    void Start()
+    {
+        posUltima = chao.transform.position;
+        tamanhoXZ = chao.transform.localScale.x;
+
+        StartCoroutine(CriaChaoInGame());
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    void CriaX()
+    {
+        Vector3 tempPos = posUltima;
+        tempPos.x += tamanhoXZ;
+        posUltima = tempPos;
+        Instantiate (chao, tempPos, Quaternion.identity);
+
+        int rand = Random.Range(0, 10);
+        if(rand <= 1)
+        {
+            Instantiate(moeda, new Vector3(tempPos.x, tempPos.y + 0.5f, tempPos.z), moeda.transform.rotation);
+        }
+    }
+    void CriaZ()
+    {
+        Vector3 tempPos = posUltima;
+        tempPos.z += tamanhoXZ;
+        posUltima = tempPos;
+        Instantiate(chao, tempPos, Quaternion.identity);
+
+        int rand = Random.Range(0, 10);
+        if (rand <= 1)
+        {
+            Instantiate(moeda, new Vector3(tempPos.x, tempPos.y + 0.5f, tempPos.z), moeda.transform.rotation);
+        }
+    }
+
+    void CriaChaoXZ()
+    {
+        int temp = Random.Range(0, 10);
+        if (temp < 5)
+        {
+            CriaX();
+        }
+        else if (temp >= 5)
+        {
+            CriaZ();
+        }
+    }
+
+    IEnumerator CriaChaoInGame()
+    {
+        while(BolaCControlador.gameOver != true)
+        {
+            yield return new WaitForSeconds(0.3f);
+            CriaChaoXZ();
+        }
+    }
+
+}
